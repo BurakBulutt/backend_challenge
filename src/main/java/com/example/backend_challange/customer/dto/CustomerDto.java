@@ -1,12 +1,11 @@
 package com.example.backend_challange.customer.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 @Data
 @Builder
 public class CustomerDto {
-    private final Long id;
+    private Long id;
     private String fullName;
     private String username;
     private String password;
