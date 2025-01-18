@@ -15,12 +15,12 @@ import java.util.Objects;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(updatable = false)
     private Long id;
 
     @CreatedDate
