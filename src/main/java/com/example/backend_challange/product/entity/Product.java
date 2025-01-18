@@ -2,6 +2,7 @@ package com.example.backend_challange.product.entity;
 
 import com.example.backend_challange.BaseEntity;
 import jakarta.persistence.Entity;
+
 import lombok.*;
 
 import java.math.BigDecimal;

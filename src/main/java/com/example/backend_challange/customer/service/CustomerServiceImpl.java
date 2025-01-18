@@ -1,17 +1,21 @@
 package com.example.backend_challange.customer.service;
 
+import com.example.backend_challange.customer.dto.AddCustomerEvent;
 import com.example.backend_challange.customer.dto.CustomerDto;
 import com.example.backend_challange.customer.entity.Customer;
 import com.example.backend_challange.customer.repo.CustomerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository repository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public Page<CustomerDto> getAllCustomers(Pageable pageable) {
@@ -24,8 +28,11 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    @Transactional
     public CustomerDto addCustomer(CustomerDto customer) {
-        return toCustomerDto(repository.save(toEntity(new Customer(), customer)));
+        CustomerDto customerDto = toCustomerDto(repository.save(toEntity(new Customer(), customer)));
+        eventPublisher.publishEvent(new AddCustomerEvent(customerDto.getId()));
+        return customerDto;
     }
 
     private CustomerDto toCustomerDto(Customer customer) {
