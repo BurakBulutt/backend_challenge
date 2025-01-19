@@ -16,12 +16,12 @@ public class CartController {
         return ResponseEntity.ok(CartResponse.toResponse(service.getCustomerCart(Long.valueOf(customerId))));
     }
 
-    @PostMapping
+    @PostMapping("add-product")
     public ResponseEntity<CartResponse> addProductToBasket(@RequestBody AddProductToCartRequest request) {
         return ResponseEntity.ok(CartResponse.toResponse(service.addProductToCart(request.customerId(),request.productId(),request.quantity())));
     }
 
-    @PutMapping
+    @PutMapping("update-quantity")
     public ResponseEntity<CartResponse> updateProductQuantity(@RequestBody UpdateQuantityRequest request) {
         return ResponseEntity.ok(CartResponse.toResponse(service.updateProductQuantity(request.customerId(),request.productId(),request.quantity())));
     }

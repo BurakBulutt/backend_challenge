@@ -13,6 +13,7 @@ import com.example.backend_challange.order.repo.OrderItemRepository;
 import com.example.backend_challange.order.repo.OrderRepository;
 import com.example.backend_challange.product.dto.UpdateStockEvent;
 import com.example.backend_challange.product.service.ProductService;
+import com.example.backend_challange.utilities.BasketEmptyException;
 import com.example.backend_challange.utilities.NotFoundException;
 import com.example.backend_challange.utilities.StockException;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemRepository orderItemRepository;
     private final CartService cartService;
     private final CustomerService customerService;
+    private final ProductService productService;
     private final ApplicationEventPublisher publisher;
 
     @Override
@@ -52,6 +54,9 @@ public class OrderServiceImpl implements OrderService {
     public OrderDto placeOrder(OrderRequest request) {
         CartDto cart = cartService.getCustomerCart(request.customerId());
         Order order = createOrder(request,cart);
+        if (cart.getCartItemDtos().isEmpty()) {
+            throw new BasketEmptyException("Cart is empty");
+        }
         if(cart.getCartItemDtos().stream().anyMatch(cartItemDto -> cartItemDto.getProductDto().getStock() < cartItemDto.getQuantity())) {
             throw new StockException("Sorry, not enough stock");
         }
@@ -92,7 +97,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderItemDto toOrderItemDto(OrderItem orderItem) {
         return OrderItemDto.builder()
                 .orderId(orderItem.getOrderId())
-                .productId(orderItem.getProductId())
+                .product(productService.getProductById(orderItem.getProductId()))
                 .quantity(orderItem.getQuantity())
                 .totalAmount(orderItem.getTotalAmount())
                 .unitPrice(orderItem.getUnitPrice())

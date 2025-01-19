@@ -30,7 +30,8 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDto getCustomerCart(Long customerId) {
-        return cartRepository.findByCustomerId(customerId).map(this::toCartDto).orElseThrow(() -> new NotFoundException("Cart Not Found"));
+        CartDto cartDto = cartRepository.findByCustomerId(customerId).map(this::toCartDto).orElseThrow(() -> new NotFoundException("Cart Not Found"));
+        return getCart(cartDto.getId());
     }
 
     @Transactional
@@ -48,14 +49,12 @@ public class CartServiceImpl implements CartService {
                     CartItem cartItem = new CartItem(cart.getCustomerDto().getId(), productId, quantity);
                     cartItemRepository.save(cartItem);
                 });
-        updateCartAmount(cart.getId());
         return getCart(cart.getId());
     }
 
 
     private CartDto removeProductFromCart(CartItem cartItem) {
         cartItemRepository.delete(cartItem);
-        updateCartAmount(cartItem.getCartId());
         return getCart(cartItem.getCartId());
     }
 
@@ -71,7 +70,6 @@ public class CartServiceImpl implements CartService {
 
         cartItem.setQuantity(quantity);
         cartItemRepository.save(cartItem);
-        updateCartAmount(cartItem.getCartId());
         return getCart(cartItem.getCartId());
     }
 
@@ -92,17 +90,18 @@ public class CartServiceImpl implements CartService {
     }
 
     private CartDto getCart(Long cartId) {
-        return cartRepository.findById(cartId).map(this::toCartDto).orElseThrow(() -> new NotFoundException("Cart Not Found"));
+        CartDto cart = cartRepository.findById(cartId).map(this::toCartDto).orElseThrow(() -> new NotFoundException("Cart Not Found"));
+        calculateCartAmount(cart);
+        return cart;
     }
 
-    private void updateCartAmount(Long cartId) {
-        CartDto cartDto = getCart(cartId);
+    private void calculateCartAmount(CartDto cartDto) {
         cartDto.setTotalAmount(BigDecimal.ZERO);
         cartDto.getCartItemDtos().forEach(cartItemDto -> {
             BigDecimal itemTotal = cartItemDto.getProductDto().getPrice().multiply(BigDecimal.valueOf(cartItemDto.getQuantity()));
             cartDto.setTotalAmount(cartDto.getTotalAmount().add(itemTotal));
         });
-        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new NotFoundException("Cart Not Found"));
+        Cart cart = cartRepository.findById(cartDto.getId()).orElseThrow(() -> new NotFoundException("Cart Not Found"));
         cart.setTotalAmount(cartDto.getTotalAmount());
         cartRepository.save(cart);
     }

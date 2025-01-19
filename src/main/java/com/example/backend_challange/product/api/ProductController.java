@@ -24,17 +24,17 @@ public class ProductController {
         return ResponseEntity.ok(ProductResponse.toResponse(service.getProductById(Long.parseLong(id))));
     }
 
-    @PostMapping("add-product")
+    @PostMapping()
     public ResponseEntity<ProductResponse> addProduct(@RequestBody ProductRequest request) {
         return ResponseEntity.ok(ProductResponse.toResponse(service.createProduct(request.toDto())));
     }
 
-    @PutMapping("update-product/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<ProductResponse> updateProduct(@PathVariable String id,@RequestBody ProductRequest request) {
         return ResponseEntity.ok(ProductResponse.toResponse(service.updateProduct(Long.parseLong(id), request.toDto())));
     }
 
-    @DeleteMapping("delete-product/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
         service.deleteProduct(Long.parseLong(id));
         return new ResponseEntity<>(HttpStatus.OK);
