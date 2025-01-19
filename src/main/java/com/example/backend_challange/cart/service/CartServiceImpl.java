@@ -51,6 +51,13 @@ public class CartServiceImpl implements CartService {
         return getCart(cart.getId());
     }
 
+
+    private CartDto removeProductFromCart(CartItem cartItem) {
+        cartItemRepository.delete(cartItem);
+        updateCartAmount(cartItem.getCartId());
+        return getCart(cartItem.getCartId());
+    }
+
     @Transactional
     @Override
     public CartDto updateProductQuantity(Long customerId, Long productId, Integer quantity) {
@@ -58,9 +65,7 @@ public class CartServiceImpl implements CartService {
         CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(),productId).orElseThrow(()-> new NotFoundException("Cart Item Not Found"));
 
         if (quantity <= 0) {
-            cartItemRepository.delete(cartItem);
-            updateCartAmount(cartItem.getCartId());
-            return getCart(cartItem.getCartId());
+            return removeProductFromCart(cartItem);
         }
 
         cartItem.setQuantity(quantity);
