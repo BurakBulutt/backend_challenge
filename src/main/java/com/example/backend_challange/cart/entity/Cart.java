@@ -1,11 +1,10 @@
 package com.example.backend_challange.cart.entity;
 
-import com.example.backend_challange.BaseEntity;
+import com.example.backend_challange.utilities.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Getter
 @Setter

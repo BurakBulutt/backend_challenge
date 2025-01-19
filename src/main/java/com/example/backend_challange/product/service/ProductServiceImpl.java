@@ -3,6 +3,7 @@ package com.example.backend_challange.product.service;
 import com.example.backend_challange.product.dto.ProductDto;
 import com.example.backend_challange.product.entity.Product;
 import com.example.backend_challange.product.repo.ProductRepository;
+import com.example.backend_challange.utilities.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +21,7 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public ProductDto getProductById(Long id) {
-        return repository.findById(id).map(this::toDto).orElseThrow(() -> new RuntimeException("Product not found"));
+        return repository.findById(id).map(this::toDto).orElseThrow(() -> new NotFoundException("Product not found"));
     }
 
     @Override
@@ -30,13 +31,13 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public ProductDto updateProduct(Long id, ProductDto productDto) {
-        Product product = repository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        Product product = repository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
         return toDto(repository.save(toEntity(product, productDto)));
     }
 
     @Override
     public void deleteProduct(Long id) {
-        Product product = repository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+        Product product = repository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
         repository.delete(product);
     }
 

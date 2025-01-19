@@ -4,6 +4,7 @@ import com.example.backend_challange.customer.dto.AddCustomerEvent;
 import com.example.backend_challange.customer.dto.CustomerDto;
 import com.example.backend_challange.customer.entity.Customer;
 import com.example.backend_challange.customer.repo.CustomerRepository;
+import com.example.backend_challange.utilities.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public CustomerDto getCustomerById(Long id) {
-        return repository.findById(id).map(this::toCustomerDto).orElseThrow(() -> new RuntimeException("Customer not found"));
+        return repository.findById(id).map(this::toCustomerDto).orElseThrow(() -> new NotFoundException("Customer not found"));
     }
 
     @Override

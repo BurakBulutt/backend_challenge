@@ -23,7 +23,7 @@ public class CartController {
 
     @PutMapping
     public ResponseEntity<CartResponse> updateProductQuantity(@RequestBody UpdateQuantityRequest request) {
-        return ResponseEntity.ok(CartResponse.toResponse(service.updateProductQuantity(request.customerId(),request.cartItemId(),request.quantity())));
+        return ResponseEntity.ok(CartResponse.toResponse(service.updateProductQuantity(request.customerId(),request.productId(),request.quantity())));
     }
 
     @DeleteMapping

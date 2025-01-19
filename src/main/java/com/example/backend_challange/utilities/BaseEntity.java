@@ -1,4 +1,4 @@
-package com.example.backend_challange;
+package com.example.backend_challange.utilities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

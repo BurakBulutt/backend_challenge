@@ -9,6 +9,7 @@ import com.example.backend_challange.cart.repo.CartRepository;
 import com.example.backend_challange.customer.dto.AddCustomerEvent;
 import com.example.backend_challange.customer.service.CustomerService;
 import com.example.backend_challange.product.service.ProductService;
+import com.example.backend_challange.utilities.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDto getCustomerCart(Long customerId) {
-        return cartRepository.findByCustomerId(customerId).map(this::toCartDto).orElseThrow(() -> new RuntimeException("Cart Not Found"));
+        return cartRepository.findByCustomerId(customerId).map(this::toCartDto).orElseThrow(() -> new NotFoundException("Cart Not Found"));
     }
 
     @Transactional
@@ -39,7 +40,7 @@ public class CartServiceImpl implements CartService {
                 .filter(cartItemDto -> cartItemDto.getProductDto().getId().equals(productId))
                 .findFirst()
                 .ifPresentOrElse(cartItemDto -> {
-                    CartItem cartItem = cartItemRepository.findById(cartItemDto.getId()).orElseThrow(() -> new RuntimeException("Cart Item Not Found"));
+                    CartItem cartItem = cartItemRepository.findById(cartItemDto.getId()).orElseThrow(() -> new NotFoundException("Cart Item Not Found"));
                     cartItem.setQuantity(cartItemDto.getQuantity() + quantity);
                     cartItemRepository.save(cartItem);
                 },() -> {
@@ -54,7 +55,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartDto updateProductQuantity(Long customerId, Long productId, Integer quantity) {
         CartDto cart = getCustomerCart(customerId);
-        CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(),productId).orElseThrow(()-> new RuntimeException("Cart Item Not Found"));
+        CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(),productId).orElseThrow(()-> new NotFoundException("Cart Item Not Found"));
 
         if (quantity <= 0) {
             cartItemRepository.delete(cartItem);
@@ -70,7 +71,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDto emptyCart(Long customerId) {
-        Cart cart = cartRepository.findByCustomerId(customerId).orElseThrow(() -> new RuntimeException("Cart Not Found"));
+        Cart cart = cartRepository.findByCustomerId(customerId).orElseThrow(() -> new NotFoundException("Cart Not Found"));
         List<CartItem> cartItems = cartItemRepository.findAllByCartId(cart.getId());
         cartItemRepository.deleteAll(cartItems);
         cart.setTotalAmount(BigDecimal.ZERO);
@@ -79,7 +80,7 @@ public class CartServiceImpl implements CartService {
     }
 
     private CartDto getCart(Long cartId) {
-        return cartRepository.findById(cartId).map(this::toCartDto).orElseThrow(() -> new RuntimeException("Cart Not Found"));
+        return cartRepository.findById(cartId).map(this::toCartDto).orElseThrow(() -> new NotFoundException("Cart Not Found"));
     }
 
     private void updateCartAmount(Long cartId) {
@@ -89,7 +90,7 @@ public class CartServiceImpl implements CartService {
             BigDecimal itemTotal = cartItemDto.getProductDto().getPrice().multiply(BigDecimal.valueOf(cartItemDto.getQuantity()));
             cartDto.setTotalAmount(cartDto.getTotalAmount().add(itemTotal));
         });
-        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new RuntimeException("Cart Not Found"));
+        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new NotFoundException("Cart Not Found"));
         cart.setTotalAmount(cartDto.getTotalAmount());
         cartRepository.save(cart);
     }

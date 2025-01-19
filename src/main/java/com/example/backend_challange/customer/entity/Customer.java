@@ -1,6 +1,6 @@
 package com.example.backend_challange.customer.entity;
 
-import com.example.backend_challange.BaseEntity;
+import com.example.backend_challange.utilities.BaseEntity;
 import jakarta.persistence.Entity;
 import lombok.*;
 
