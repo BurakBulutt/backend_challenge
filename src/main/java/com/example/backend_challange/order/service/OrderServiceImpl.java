@@ -53,13 +53,13 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDto placeOrder(OrderRequest request) {
         CartDto cart = cartService.getCustomerCart(request.customerId());
-        Order order = createOrder(request,cart);
         if (cart.getCartItemDtos().isEmpty()) {
             throw new BasketEmptyException("Cart is empty");
         }
         if(cart.getCartItemDtos().stream().anyMatch(cartItemDto -> cartItemDto.getProductDto().getStock() < cartItemDto.getQuantity())) {
             throw new StockException("Sorry, not enough stock");
         }
+        Order order = createOrder(request,cart);
         cart.getCartItemDtos().forEach(cartItemDto -> {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrderId(order.getId());
