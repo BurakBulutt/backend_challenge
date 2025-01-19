@@ -12,4 +12,8 @@ public class RestHandler {
     public ResponseEntity<Object> handleNotFound(NotFoundException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(StockException.class)
+    public ResponseEntity<Object> handleNotFound(StockException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }

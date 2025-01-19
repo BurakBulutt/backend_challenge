@@ -10,11 +10,14 @@ import lombok.*;
 @NoArgsConstructor
 @Entity
 @EqualsAndHashCode(callSuper = true)
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"cartId","productId"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {CartItem.COL_CART_ID,CartItem.COL_PRODUCT_ID}))
 public class CartItem extends BaseEntity {
-    @Column(nullable = false)
+    public static final String COL_CART_ID = "order_id";
+    public static final String COL_PRODUCT_ID = "product_id";
+
+    @Column(nullable = false,name = COL_CART_ID)
     private Long cartId;
-    @Column(nullable = false)
+    @Column(nullable = false,name = COL_PRODUCT_ID)
     private Long productId;
     private Integer quantity;
 }

@@ -2,6 +2,7 @@ package com.example.backend_challange.cart.service;
 
 import com.example.backend_challange.cart.dto.CartDto;
 import com.example.backend_challange.cart.dto.CartItemDto;
+import com.example.backend_challange.cart.dto.EmptyCartEvent;
 import com.example.backend_challange.cart.entity.Cart;
 import com.example.backend_challange.cart.entity.CartItem;
 import com.example.backend_challange.cart.repo.CartItemRepository;
@@ -82,6 +83,12 @@ public class CartServiceImpl implements CartService {
         cart.setTotalAmount(BigDecimal.ZERO);
         cartRepository.save(cart);
         return getCart(cart.getId());
+    }
+
+    @EventListener(EmptyCartEvent.class)
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void emptyCartEvent(EmptyCartEvent event) {
+        emptyCart(event.customerId());
     }
 
     private CartDto getCart(Long cartId) {

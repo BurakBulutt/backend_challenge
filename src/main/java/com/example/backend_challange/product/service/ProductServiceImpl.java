@@ -1,13 +1,17 @@
 package com.example.backend_challange.product.service;
 
 import com.example.backend_challange.product.dto.ProductDto;
+import com.example.backend_challange.product.dto.UpdateStockEvent;
 import com.example.backend_challange.product.entity.Product;
 import com.example.backend_challange.product.repo.ProductRepository;
 import com.example.backend_challange.utilities.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +43,14 @@ public class ProductServiceImpl implements ProductService{
     public void deleteProduct(Long id) {
         Product product = repository.findById(id).orElseThrow(() -> new NotFoundException("Product not found"));
         repository.delete(product);
+    }
+
+    @EventListener
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void updateStock(UpdateStockEvent event) {
+        Product product = repository.findById(event.productId()).orElseThrow(() -> new NotFoundException("Product not found"));
+        product.setStock(product.getStock() - event.quantity());
+        repository.save(product);
     }
 
     private ProductDto toDto(Product product) {
