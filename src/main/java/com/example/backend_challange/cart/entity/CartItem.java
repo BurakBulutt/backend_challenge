@@ -12,7 +12,7 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {CartItem.COL_CART_ID,CartItem.COL_PRODUCT_ID}))
 public class CartItem extends BaseEntity {
-    public static final String COL_CART_ID = "order_id";
+    public static final String COL_CART_ID = "cart_id";
     public static final String COL_PRODUCT_ID = "product_id";
 
     @Column(nullable = false,name = COL_CART_ID)
