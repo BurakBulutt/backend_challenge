@@ -1,0 +1,33 @@
+services:
+  enoca_challenge:
+    container_name: enoca-challenge
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+    networks:
+      - challenge_network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=challenge_db
+    ports:
+      - "5432:5432"
+    networks:
+      - challenge_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  challenge_network:
+    driver: bridge
