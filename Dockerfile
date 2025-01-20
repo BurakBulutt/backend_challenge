@@ -6,5 +6,5 @@ RUN mvn clean package -DskipTests
 
 FROM openjdk:17-alpine
 WORKDIR /app
-COPY --from=BUILD /app/src/target/backend_challange-0.0.1-SNAPSHOT.jar /app/application.jar
+COPY --from=BUILD /app/target/backend_challange-0.0.1-SNAPSHOT.jar /app/application.jar
 ENTRYPOINT ["java","-jar","application.jar"]

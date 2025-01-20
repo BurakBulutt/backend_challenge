@@ -1,6 +1,6 @@
 spring:
   application:
-    name: backend_challange
+    name: backend_challenge
   jpa:
     hibernate:
       ddl-auto: update
@@ -9,4 +9,4 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: postgres
-    url: jdbc:postgresql://localhost:5432/challenge_db
+    url: jdbc:postgresql://db:5432/challenge_db
